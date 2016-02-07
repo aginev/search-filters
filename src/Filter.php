@@ -48,9 +48,8 @@ class Filter
         $this->request = new Collection($request);
         $this->constraints = new Collection();
 
-        //TODO load from config
-        $this->order_by = 'id';
-        $this->order_dir = 'desc';
+        $this->order_by = config('search-filters.order_by', 'id');
+        $this->order_dir = config('search-filters.order_dir', 'desc');
     }
 
     /**
@@ -86,10 +85,10 @@ class Filter
      */
     public function order()
     {
-        $by = $this->request->get('order_by', $this->order_by);
+        $by = $this->request->get(config('search-filters.order_by_key', 'order_by'), $this->order_by);
         $by = $this->constraints->has($by) ? $by : $this->order_by;
 
-        $dir = strtolower($this->request->get('order_dir', $this->order_dir));
+        $dir = strtolower($this->request->get(config('search-filters.order_dir_key', 'order_dir'), $this->order_dir));
         $dir = in_array($dir, ['asc', 'desc']) ? $dir : $this->order_dir;
 
         $this->query->orderBy($by, $dir);
