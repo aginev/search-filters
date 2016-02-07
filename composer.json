@@ -1,0 +1,24 @@
+{
+  "name": "aginev/search-filters",
+  "description": "Easily apply search criteria on Laravel 5 queries",
+  "keywords": [
+    "search filters",
+    "search criteria on Laravel 5 queries",
+    "Laravel 5 search filters"
+  ],
+  "homepage": "http://aginev.com",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Atanas Ginev",
+      "email": "naskospam@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Aginev\\SearchFilters\\": "src"
+    }
+  },
+  "require": {
+  }
+}
