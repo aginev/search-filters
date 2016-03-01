@@ -27,7 +27,7 @@ Add Service Provider to your config/app.php like so
 
 Publish config
 ```sh
-php artisan vendor:publish --provider="Aginev\SearchFilters\SearchFiltersServiceProvider::class" --tag="config"
+php artisan vendor:publish --provider="Aginev\SearchFilters\SearchFiltersServiceProvider" --tag="config"
 ```
 
 ## Usage
