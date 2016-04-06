@@ -65,6 +65,7 @@ class Filter
 
         if (method_exists($this, $method)) {
             $this->setConstraint($key);
+            $value = $this->value($key)
 
             // Null will be returned if the value do not exists in the request
             // Consider empty string ('') as invalid value
