@@ -66,7 +66,9 @@ class Filter
         if (method_exists($this, $method)) {
             $this->setConstraint($key);
 
-            if ($value = $this->value($key)) {
+            // Null will be returned if the value do not exists in the request
+            // Consider empty string ('') as invalid value
+            if ( ! is_null($value) && $value !== '') {
                 array_push($arguments, $value);
 
                 return call_user_func_array([$this, $method], $arguments);
@@ -100,7 +102,7 @@ class Filter
      * Custom filter
      *
      * @param $key
-     * @param callable $callback
+     * @param \Closure $callback
      * @return $this
      */
     public function custom($key, \Closure $callback)
@@ -364,15 +366,11 @@ class Filter
      * Get specific key value from the search criteria
      *
      * @param $key
-     * @return bool|mixed
+     * @return null|mixed
      */
     private function value($key)
     {
-        if ($this->request->has($key)) {
-            return $this->request->get($key);
-        }
-
-        return false;
+        return $this->request->get($key, null);
     }
 
     /**
