@@ -88,13 +88,16 @@ class Filter
      */
     public function order()
     {
-        $by = $this->request->get(config('search-filters.order_by_key', 'order_by'), $this->order_by);
-        $by = $this->constraints->has($by) ? $by : $this->order_by;
+        $by = $this->request->get(config('search-filters.order_by_key', 'order_by'), '');
 
-        $dir = strtolower($this->request->get(config('search-filters.order_dir_key', 'order_dir'), $this->order_dir));
-        $dir = in_array($dir, ['asc', 'desc']) ? $dir : $this->order_dir;
+        if ($by) {
+            $by = $this->constraints->has($by) ? $by : $this->order_by;
 
-        $this->query->orderBy($by, $dir);
+            $dir = strtolower($this->request->get(config('search-filters.order_dir_key', 'order_dir'), $this->order_dir));
+            $dir = in_array($dir, ['asc', 'desc']) ? $dir : $this->order_dir;
+
+            $this->query->orderBy($by, $dir);
+        }
 
         return $this;
     }
