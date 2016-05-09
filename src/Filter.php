@@ -164,7 +164,7 @@ class Filter
      *
      * @param $key
      * @param Closure $callback
-     * @param Closure $order_callback
+     * @param Closure|null $order_callback
      * @return $this
      */
     public function custom($key, Closure $callback, Closure $order_callback = null)
@@ -430,15 +430,11 @@ class Filter
      * Get specific key value from the search criteria
      *
      * @param $key
-     * @return bool|mixed
+     * @return null|mixed
      */
     private function value($key)
     {
-        if ($this->request->has($key)) {
-            return $this->request->get($key);
-        }
-
-        return false;
+        return $this->request->get($key, null);
     }
 
     /**
