@@ -2,6 +2,7 @@
 
 namespace Aginev\SearchFilters;
 
+use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -42,6 +43,13 @@ class Filter
      */
     protected $order_dir;
 
+    /**
+     * Flag if any custom filter has been applied
+     *
+     * @var bool
+     */
+    protected $has_custom_filter = false;
+
     public function __construct(Builder $query, array $request)
     {
         $this->query = $query;
@@ -60,22 +68,66 @@ class Filter
      */
     public function __call($method, $arguments)
     {
+        $params = [];
         $method = 'set' . ucfirst($method);
         $key = $arguments[0];
+        $order_callback = array_key_exists(1, $arguments) ? $arguments[1] : null;
 
         if (method_exists($this, $method)) {
-            $this->setConstraint($key);
+            $this->setConstraint($key, $order_callback);
 
             if ($value = $this->value($key)) {
-                array_push($arguments, $value);
+                $params[0] = $key;
+                $params[1] = $value;
+                $params[2] = $order_callback;
 
-                return call_user_func_array([$this, $method], $arguments);
+                return call_user_func_array([$this, $method], $params);
             }
 
             return $this;
         }
 
         throw new \Exception('Filter method not found!');
+    }
+
+    public function getOrderByField()
+    {
+        return $this->request->get(config('search-filters.order_by_key', 'order_by'), '');
+    }
+
+    /**
+     * Get order by field name
+     *
+     * @return string
+     */
+    public function getOrderBy()
+    {
+        $by = $this->getOrderByField();
+
+        if ($this->constraints->has($by)) {
+            $constraint = $this->constraints->get($by);
+
+            if ($constraint instanceof Closure) {
+                return $constraint;
+            } else {
+                return $by;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Get order by direction
+     *
+     * @return string
+     */
+    public function getOrderDir()
+    {
+        $dir = strtolower($this->request->get(config('search-filters.order_dir_key', 'order_dir'), $this->order_dir));
+        $dir = in_array($dir, ['asc', 'desc']) ? $dir : $this->order_dir;
+
+        return $dir;
     }
 
     /**
@@ -85,31 +137,45 @@ class Filter
      */
     public function order()
     {
-        $by = $this->request->get(config('search-filters.order_by_key', 'order_by'), $this->order_by);
-        $by = $this->constraints->has($by) ? $by : $this->order_by;
+        $by = $this->getOrderBy();
+        $dir = $this->getOrderDir();
 
-        $dir = strtolower($this->request->get(config('search-filters.order_dir_key', 'order_dir'), $this->order_dir));
-        $dir = in_array($dir, ['asc', 'desc']) ? $dir : $this->order_dir;
-
-        $this->query->orderBy($by, $dir);
+        if ($by instanceof Closure) {
+            $by($this->getOrderByField(), $dir, $this->query);
+        } else if ($by) {
+            $this->query->orderBy($by, $dir);
+        }
 
         return $this;
+    }
+
+    /**
+     * True if has custom filters applied
+     *
+     * @return bool
+     */
+    public function hasCustomFilters()
+    {
+        return $this->has_custom_filter;
     }
 
     /**
      * Custom filter
      *
      * @param $key
-     * @param callable $callback
+     * @param Closure $callback
+     * @param Closure $order_callback
      * @return $this
      */
-    public function custom($key, \Closure $callback)
+    public function custom($key, Closure $callback, Closure $order_callback = null)
     {
-        $this->setConstraint($key);
+        $this->setConstraint($key, $order_callback);
 
         if ($value = $this->value($key)) {
             $callback($this->query, $key, $value);
         }
+
+        $this->has_custom_filter = true;
 
         return $this;
     }
@@ -379,11 +445,12 @@ class Filter
      * Set key in the constraints array
      *
      * @param $key
+     * @param Closure $order
      * @return $this
      */
-    private function setConstraint($key)
+    private function setConstraint($key, Closure $order = null)
     {
-        $this->constraints->put($key, $key);
+        $this->constraints->put($key, $order ? $order : $key);
 
         return $this;
     }

@@ -24,7 +24,7 @@ trait Filterable
         // Set the filters if any defined
         $this->setFilters();
 
-        // Call order always after the all filters
+        // Call order always after the all filters and if there are no custom filters applied
         $this->filter->order();
 
         // Object are always passed by reference
