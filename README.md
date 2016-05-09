@@ -46,7 +46,10 @@ Implement setFilters method and define your filters. All filter methods are acce
  */
 public function setFilters()
 {
-    $this->filter->equal('id')
+    $this->filter->equal('id', function ($by, $dir, $query) {
+            // Every filter can recieve as last paramenter a closure that can be used for custom query order if required
+            $query->orderBy($by, $dir);
+        })
         ->like('email')
         ->like('first_name')
         ->like('middle_name')
@@ -65,6 +68,9 @@ public function setFilters()
     $this->filter->equal('id')
         ->custom('full_name', function ($query, $key, $value) {
             $query->where(\DB::raw("CONCAT_WS(' ', first_name, middle_name, last_name)"), 'LIKE', '%' . $value . '%');
+        }, function ($by, $dir, $query) {
+            // Define custom order or skip this parameter in method call
+            $query->orderBy($by, $dir);
         });
 }
 ```
@@ -89,7 +95,13 @@ public function setFilters()
         // $query - instance of Illuminate\Database\Eloquent\Builder
         // $column - the string passed as first argument
         // $value - the filter value if exists and not empty
-     })
+     }, function ($by, $dir, $query) {
+        // Not required and can be applied to any other filter method
+     
+        // $by - order by field
+        // $dir - order direction
+        // $query - instance of Illuminate\Database\Eloquent\Builder
+    })
      ->equal('column')                  // column = filter_value
      ->distinct('column')               // column <> filter_value
      ->greaterThan('column')            // column > filter_value
@@ -115,3 +127,6 @@ Want to share your custom filter methods? Submit a pull request and I'll conside
 
 ## License
 MIT - http://opensource.org/licenses/MIT
+
+## About
+Need a freelance web developer? Contact me at my website http://aginev.com
