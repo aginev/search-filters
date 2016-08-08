@@ -68,25 +68,23 @@ class Filter
      */
     public function __call($method, $arguments)
     {
-        $params = [];
         $method = 'set' . ucfirst($method);
         $key = $arguments[0];
-        $order_callback = array_key_exists(1, $arguments) ? $arguments[1] : null;
-
+        
         if (method_exists($this, $method)) {
-            $this->setConstraint($key, $order_callback);
-
-            if ($value = $this->value($key)) {
-                $params[0] = $key;
-                $params[1] = $value;
-                $params[2] = $order_callback;
-
-                return call_user_func_array([$this, $method], $params);
+            $this->setConstraint($key);
+            $value = $this->value($key)
+            
+            // Null will be returned if the value do not exists in the request
+            // Consider empty string ('') as invalid value
+            if (!is_null($value) && $value !== '') {
+                array_push($arguments, $value);
+                return call_user_func_array([$this, $method], $arguments);
             }
-
+            
             return $this;
         }
-
+        
         throw new \Exception('Filter method not found!');
     }
 
