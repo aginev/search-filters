@@ -168,8 +168,8 @@ class Filter
     public function custom($key, Closure $callback, Closure $order_callback = null)
     {
         $this->setConstraint($key, $order_callback);
-
-        if ($value = $this->value($key)) {
+        
+        if (!is_null($value)) {
             $callback($this->query, $key, $value);
         }
 
