@@ -4,25 +4,15 @@ This package will try to solve the problem with filtering a result set and will 
 ## Features
 - Composer installable
 - PSR4 auto loading
-- Filter query in Laravel 5
+- Filter query in Laravel 5+
 
 ## Requires
-Build only for Laravel Framework 5 only!
+Build to be used with Laravel only!
 
 ## Installation
 In terminal
 ```sh
-composer require aginev/search-filters:1.0.*
-```
-
-Add Service Provider to your config/app.php like so
-```php
-// config/app.php
-
-'providers' => [
-    '...',
-    Aginev\SearchFilters\SearchFiltersServiceProvider::class
-];
+composer require aginev/search-filters:2.0.*
 ```
 
 Publish config
@@ -123,10 +113,10 @@ public function setFilters()
 ```
 
 ## Contribution
-Want to share your custom filter methods? Submit a pull request and I'll consider them :)
+Want to share your custom filter methods? Submit a pull request, and I'll consider them :)
 
 ## License
 MIT - http://opensource.org/licenses/MIT
 
 ## About
-Need a freelance web developer? Contact me at my website http://aginev.com
+Need a freelance web developer? Contact me at my website https://aginev.com

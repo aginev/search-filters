@@ -1,10 +1,10 @@
 {
   "name": "aginev/search-filters",
-  "description": "Easily apply search criteria on Laravel 5 queries",
+  "description": "Easily apply search criteria on Laravel 5+ queries",
   "keywords": [
     "search filters",
-    "search criteria on Laravel 5 queries",
-    "Laravel 5 search filters"
+    "search criteria on Laravel 5+ queries",
+    "Laravel 5+ search filters"
   ],
   "homepage": "http://aginev.com",
   "license": "MIT",
@@ -20,5 +20,13 @@
     }
   },
   "require": {
+    "laravel/framework": "^7.0|^8.0"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Aginev\\Datagrid\\DatagridServiceProvider"
+      ]
+    }
   }
 }

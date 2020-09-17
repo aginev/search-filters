@@ -30,10 +30,11 @@ class SearchFiltersServiceProvider extends ServiceProvider
     public function boot()
     {
         // Merge config
-        $this->mergeConfigFrom(base_path('vendor/aginev/search-filters/config/search-filters.php'), 'search-filters');
-        // Publish config
+        $this->mergeConfigFrom(__DIR__ . '/../config/search-filters.php', 'search-filters');
+        
+        // Publish package config
         $this->publishes([
-            base_path('vendor/aginev/search-filters/config/search-filters.php') => config_path('search-filters.php'),
+            __DIR__ . '/../config/search-filters.php' => config_path('search-filters.php'),
         ], 'config');
     }
 
