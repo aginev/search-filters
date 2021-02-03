@@ -3,8 +3,8 @@
   "description": "Easily apply search criteria on Laravel 5+ queries",
   "keywords": [
     "search filters",
-    "search criteria on Laravel 5+ queries",
-    "Laravel 5+ search filters"
+    "search criteria on Laravel queries",
+    "Laravel search filters"
   ],
   "homepage": "http://aginev.com",
   "license": "MIT",
